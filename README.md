@@ -6,9 +6,6 @@ Tekana-eWallet are apis for managing your money digitally, with basic functional
 
 - [x] create
 - [x] retrieve
-- [x] update
-- [x] delete
-- [x] rank
 
 ## Installation Guide
 
