@@ -8,42 +8,41 @@ The mission is re-design and build from scratch a backend solution for a legacy 
 
 ## Strategy
 
-    - Understand current and required implementation:
-        Meet the business team to understand the current system situation and problems, as well as business requirements
+- Understand current and required implementation:
+  Meet the business team to understand the current system situation and problems, as well as business requirements
 
-    - Create tickets for tasks:
-        Sit with the product owner or scrum master to add on backlog all the tasks and set deadline for each
+- Create tickets for tasks:
+  Sit with the product owner or scrum master to add on backlog all the tasks and set deadline for each
 
+- Design the system architecture:
+  Brainstorm with tech team, on system workflow and implementation and have common understanding.
 
-    - Design the system architecture:
-        Brainstorm with tech team, on system workflow and implementation and have common understanding.
+- Determine tech stack:
+  List all tech stack to be used, for both backend and frontend team based on each stack performance and how they can serve well customers.
 
-    - Determine tech stack:
-        List all tech stack to be used, for both backend and frontend team based on each stack performance and how they can serve well customers.
+- Implement the back-end:
+  Start by setting up the codebase and proceed with implementing the task, by following the best practices
 
-    - Implement the back-end:
-        Start by setting up the codebase and proceed with implementing the task, by following the best practices
+  And delivery workflow (agile methodology)
 
-        And delivery workflow (agile methodology)
+  Write integration test as you accomplish the task
 
-        Write integration test as you accomplish the task
+- Integrate with the front-end:
+  Work hand in hand with front-end team to implement apis which align with frontend requirements.
 
-    - Integrate with the front-end:
-        Work hand in hand with front-end team to implement apis which align with frontend requirements.
+- Deploy and test the pilot system:
+  Deploy the pilot system to a staging environment by first running integration test through pipeline to ensure that all tasks are working as expected.
 
-    - Deploy and test the pilot system:
-        Deploy the pilot system to a staging environment by first running integration test through pipeline to ensure that all tasks are working as expected.
+  Address any issue discovered abd create a ticket for it on backlog.
 
-        Address any issue discovered by creating for it a ticket on backlog.
+  Fix it and push it in fix-branch, and once been tested merge it in main branch
 
-        Fix the issue
+- Do manual tests for pilot system:
+  Test the pilot manually to ensure that the system is responsive, user friendly, reliable(speed to process).
 
-    - Do manual tests for pilot system:
-        Test the pilot manually to ensure that the system is responsive, user friendly, reliable(speed to process).
-
-    - Launch the new system to all users:
-        Once the tests phase is successful, launch the system to be accessible by everyone.
-        Continue to monitor the system and address any issues come along the way.
+- Launch the new system to all users:
+  Once the tests phase is successful, launch the system to be accessible by everyone.
+  Continue to monitor the system and address any issues come along the way.
 
 ## Functionality
 
