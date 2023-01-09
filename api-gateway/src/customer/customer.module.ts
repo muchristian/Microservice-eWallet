@@ -9,14 +9,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'CUSTOMER_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://rabbitmq:5672'],
-          queue: 'customer-queue',
-          queueOptions: {
-            durable: false,
-          },
-        },
+        transport: Transport.TCP,
+        // options: {
+        //   urls: ['amqp://localhost:5672'],
+        //   queue: 'customer-queue',
+        //   queueOptions: {
+        //     durable: false,
+        //   },
+        // },
       },
     ]),
   ],

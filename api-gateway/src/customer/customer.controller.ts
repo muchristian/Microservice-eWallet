@@ -31,9 +31,7 @@ export class CustomerController {
   @Post()
   @ApiCreatedResponse(getGenericResponseSchema(CreateCustomerDto))
   @HttpCode(HttpStatus.CREATED)
-  create(
-    @Body() createCustomerDto: CreateCustomerDto,
-  ): GenericResponse<Observable<CustomerResponseDto>> {
+  create(@Body() createCustomerDto: CreateCustomerDto) {
     const result = this.customerService.create(createCustomerDto);
     return {
       message: 'Customer create successfully',

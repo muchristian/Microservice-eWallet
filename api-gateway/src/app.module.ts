@@ -4,8 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { runtimeConfig } from './shared/config/app.config';
 import { CustomerModule } from './customer/customer.module';
-import { WalletModule } from './wallet/wallet.module';
-import { TransactionModule } from './transaction/transaction.module';
+// import { WalletModule } from './wallet/wallet.module';
+// import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import { TransactionModule } from './transaction/transaction.module';
       load: [runtimeConfig],
     }),
     CustomerModule,
-    WalletModule,
-    TransactionModule,
+    // WalletModule,
+    // TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,4 +16,9 @@ export class CreateCustomerDto {
   @IsNotEmpty()
   @IsString()
   email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
 }

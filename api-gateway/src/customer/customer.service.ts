@@ -12,11 +12,9 @@ import { IPage } from 'src/shared/interfaces/page.interface';
 @Injectable()
 export class CustomerService {
   constructor(@Inject('CUSTOMER_SERVICE') private client: ClientProxy) {}
-  create(
-    createCustomerDto: CreateCustomerDto,
-  ): Observable<CustomerResponseDto> {
+  create(createCustomerDto: CreateCustomerDto) {
     console.log(createCustomerDto);
-    return this.client.emit({ cmd: 'create-customer' }, createCustomerDto);
+    this.client.send('create-customer', { ...createCustomerDto });
   }
 
   findAll(paginateParams: IPagination): Observable<IPage<CustomerResponseDto>> {
@@ -24,7 +22,7 @@ export class CustomerService {
     return this.client.send({ cmd: 'get-customers' }, paginateParams);
   }
 
-  async onApplicationBootstrap() {
-    await this.client.connect();
-  }
+  // async onApplicationBootstrap() {
+  //   await this.client.connect();
+  // }
 }

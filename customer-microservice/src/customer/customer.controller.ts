@@ -35,7 +35,7 @@ import { Customer } from './entities/customer.entity';
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @EventPattern('create-customer')
+  @MessagePattern('create-customer')
   async create(
     @Payload() createCustomerDto: CreateCustomerDto,
   ): Promise<GenericResponse<Customer>> {
