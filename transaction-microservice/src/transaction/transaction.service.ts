@@ -1,13 +1,12 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { IPagination } from './dto/paginate.dto';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Wallet } from './entities/wallet.entity';
 import GenericResponse from '../shared/interfaces/generic-response';
@@ -15,6 +14,8 @@ import { IPage } from '../shared/interfaces/page.interface';
 import { Customer } from './entities/customer.entity';
 import { Transaction } from './entities/transaction.entity';
 import { transactionTypes } from 'src/shared/enums/transactionTypes';
+import { FilterDto } from './dto/filter-transaction.dto';
+import { transactionStatus } from 'src/shared/enums/transactionStatus';
 
 @Injectable()
 export class TransactionService {
@@ -28,55 +29,88 @@ export class TransactionService {
   ) {}
 
   async create(createTransactionDto: CreateTransactionDto): Promise<any> {
-    console.log(createTransactionDto);
+    const sender = await this.customerRepo.findOne({
+      where: {
+        id: createTransactionDto.senderId,
+      },
+    });
+    if (!sender) {
+      return new NotFoundException('Sender not found').getResponse();
+    }
+
+    const receiver = await this.customerRepo.findOne({
+      where: {
+        id: createTransactionDto.receiverId,
+      },
+    });
+    if (!receiver) {
+      return new NotFoundException('Receiver not found').getResponse();
+    }
+    const wallet = await this.walletRepo.findOne({
+      where: {
+        id: sender.id,
+      },
+    });
+
+    if (wallet) {
+      if (
+        wallet.balance < createTransactionDto.amount &&
+        createTransactionDto.type === transactionTypes.debit
+      ) {
+        throw new BadRequestException('There is no enough money on balance');
+      }
+
+      await this.walletRepo.save({
+        balance:
+          createTransactionDto.type === transactionTypes.credit
+            ? wallet.balance + createTransactionDto.amount
+            : wallet.balance - createTransactionDto.amount,
+      });
+
+      const result = await this.transactionRepo.save({
+        sender: sender,
+        receiver: receiver,
+        wallet: wallet,
+        status: transactionStatus.success,
+        reference: `${Math.floor(Math.random() * 10)}`,
+        ...createTransactionDto,
+      });
+      return { message: 'Transaction create successfully', result };
+    }
+  }
+
+  async findAll(query: {
+    paginateParams: IPagination;
+    filterOptions: FilterDto;
+  }): Promise<GenericResponse<IPage<Transaction>> | any> {
+    const { customerId, type } = query.filterOptions;
     const customer = await this.customerRepo.findOne({
       where: {
-        id: createTransactionDto.customerId,
+        id: customerId,
       },
     });
     if (!customer) {
-      throw new NotFoundException('Customer not found');
+      return new NotFoundException('Customer not found').getResponse();
     }
 
-    const wallet = await this.walletRepo.findOne({
-      where: {
-        id: createTransactionDto.walletId,
-      },
-    });
-    if (!wallet) {
-      throw new NotFoundException('Wallet not found');
-    }
-
-    if (
-      wallet.balance < createTransactionDto.amount &&
-      createTransactionDto.type === transactionTypes.debit
-    ) {
-      throw new BadRequestException('There is no enough money on balance');
-    }
-
-    await this.walletRepo.save({
-      balance:
-        createTransactionDto.type === transactionTypes.credit
-          ? wallet.balance + createTransactionDto.amount
-          : wallet.balance - createTransactionDto.amount,
-    });
-
-    const result = await this.transactionRepo.save({
-      customer: customer,
-      wallet: wallet,
-      reference: `${Math.floor(Math.random() * 10)}`,
-      ...createTransactionDto,
-    });
-    return result;
-  }
-
-  async findAll(query: IPagination): Promise<IPage<Transaction>> {
     const queryBuilder = this.transactionRepo.createQueryBuilder('transaction');
-    queryBuilder.leftJoinAndSelect('transaction.customer', 'customer');
+    queryBuilder.leftJoinAndSelect('transaction.sender', 'sender');
+    queryBuilder.leftJoinAndSelect('transaction.receiver', 'receiver');
     queryBuilder.leftJoinAndSelect('transaction.wallet', 'wallet');
+    queryBuilder.where('sender.id = :senderId', {
+      senderId: customer.id,
+    });
+    if (type) {
+      queryBuilder.andWhere('transaction.type = :type', {
+        type,
+      });
+    }
     queryBuilder.orderBy('transaction.createdAt', 'DESC');
     queryBuilder.getMany();
-    const { items, meta } = await paginate(queryBuilder, query);
-    return { items, ...meta };
+    const { items, meta } = await paginate(queryBuilder, query.paginateParams);
+    return {
+      message: 'Transactions retrieved successfully',
+      result: { items, ...meta },
+    };
   }
 }

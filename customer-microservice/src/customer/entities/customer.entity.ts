@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import BaseEntity from '../../shared/interfaces/base.entity';
 
 @Entity('customer')
@@ -14,13 +8,13 @@ export class Customer extends BaseEntity {
     nullable: false,
   })
   @ApiProperty()
-  firstName: string;
+  firstname: string;
 
   @Column({
     nullable: false,
   })
   @ApiProperty()
-  lastName: string;
+  lastname: string;
 
   @Column({
     nullable: false,

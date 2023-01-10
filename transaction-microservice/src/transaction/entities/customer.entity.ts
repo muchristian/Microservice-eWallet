@@ -14,13 +14,13 @@ export class Customer extends BaseEntity {
     nullable: false,
   })
   @ApiProperty()
-  firstName: string;
+  firstname: string;
 
   @Column({
     nullable: false,
   })
   @ApiProperty()
-  lastName: string;
+  lastname: string;
 
   @Column({
     nullable: false,

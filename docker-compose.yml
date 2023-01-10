@@ -40,6 +40,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
     build:
       context: ./customer-microservice
     depends_on:
@@ -53,51 +55,55 @@ services:
     networks:
       - tekana-net
 
-  # wallet-microservice:
-  #   container_name: wallet_microservice
-  #   environment:
-  #     NODE_ENV: development
-  #     PORT: 3002
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_HOST: psqldb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: postgres
-  #   build:
-  #     context: ./wallet-microservice
-  #   depends_on:
-  #     - psqldb
-  #     - rabbitmq
-  #   expose:
-  #     - 3002
-  #   ports:
-  #     - 3002:3002
-  #   restart: unless-stopped
-  #   networks:
-  #     - tekana-net
+  wallet-microservice:
+    container_name: wallet_microservice
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: psqldb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    build:
+      context: ./wallet-microservice
+    depends_on:
+      - psqldb
+      - rabbitmq
+    expose:
+      - 3002
+    ports:
+      - 3002:3002
+    restart: unless-stopped
+    networks:
+      - tekana-net
 
-  # transaction-microservice:
-  #   container_name: transaction_microservice
-  #   environment:
-  #     NODE_ENV: development
-  #     PORT: 3003
-  #     POSTGRES_PORT: 5432
-  #     POSTGRES_HOST: psqldb
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: postgres
-  #   build:
-  #     context: ./transaction-microservice
-  #   depends_on:
-  #     - psqldb
-  #     - rabbitmq
-  #   expose:
-  #     - 3003
-  #   ports:
-  #     - 3003:3003
-  #   restart: unless-stopped
-  #   networks:
-  #     - tekana-net
+  transaction-microservice:
+    container_name: transaction_microservice
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: psqldb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    build:
+      context: ./transaction-microservice
+    depends_on:
+      - psqldb
+      - rabbitmq
+    expose:
+      - 3003
+    ports:
+      - 3003:3003
+    restart: unless-stopped
+    networks:
+      - tekana-net
 
   psqldb:
     image: postgres:13

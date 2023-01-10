@@ -6,20 +6,20 @@ export class CreateTransactionDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  senderId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  receiverId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
   amount: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsEnum(transactionTypes)
   type: transactionTypes;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  senderId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  receiverId: number;
 }

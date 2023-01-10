@@ -1,27 +1,25 @@
 import { Module } from '@nestjs/common';
-import { CustomerController } from './customer.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TransactionController } from './transaction.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { SharedModule } from 'src/shared/utils/shared.module';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'CUSTOMER_SERVICE',
+        name: 'TRANSACTION_SERVICE',
         transport: Transport.RMQ,
         options: {
           urls: [
             `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
           ],
-          queue: 'customer-queue',
+          queue: 'transaction-queue',
           queueOptions: {
-            durable: true,
+            durable: false,
           },
         },
       },
     ]),
   ],
-  controllers: [CustomerController],
+  controllers: [TransactionController],
 })
-export class CustomerModule {}
+export class TransactionModule {}

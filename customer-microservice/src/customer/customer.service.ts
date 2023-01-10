@@ -6,39 +6,62 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { IPagination } from './dto/paginate.dto';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
 import GenericResponse from 'src/shared/interfaces/generic-response';
 import { IPage } from 'src/shared/interfaces/page.interface';
+import { Wallet } from './entities/wallet.entity';
 
 @Injectable()
 export class CustomerService {
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
+    @InjectRepository(Wallet)
+    private readonly walletRepo: Repository<Wallet>,
   ) {}
 
   async create(createCustomerDto: CreateCustomerDto): Promise<any> {
-    console.log(createCustomerDto);
     const findCustomer = await this.customerRepo.findOne({
       where: {
         email: createCustomerDto.email,
       },
     });
     if (findCustomer)
-      throw new ConflictException('Customer with provided email already exist');
+      return new ConflictException(
+        'Customer with provided email already exist',
+      ).getResponse();
     const result = await this.customerRepo.save({
       ...createCustomerDto,
     });
 
-    return result;
+    const wallet = await this.walletRepo.save({
+      customer: result,
+    });
+    const response = {
+      ...result,
+      wallet: { id: wallet.id, balance: wallet.balance },
+    };
+    return {
+      message: 'Customer create successfully with his wallet',
+      response,
+    };
   }
 
-  async findAll(query: IPagination): Promise<IPage<Customer>> {
-    const queryBuilder = this.customerRepo.createQueryBuilder('customer');
-    queryBuilder.orderBy('customer.createdAt', 'DESC');
-    const { items, meta } = await paginate(queryBuilder, query);
-    return { items, ...meta };
+  async findOne(id: number): Promise<Customer | any> {
+    const customer = await this.customerRepo.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!customer) {
+      return new NotFoundException('Customer not found').getResponse();
+    }
+    return {
+      message: 'Customer retrieved successfully',
+      result: customer,
+    };
   }
 }

@@ -1,13 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { transactionTypes } from '../../shared/enums/transactionTypes';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { transactionStatus } from 'src/shared/enums/transactionStatus';
+import { transactionTypes } from 'src/shared/enums/transactionTypes';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import BaseEntity from '../../shared/interfaces/base.entity';
 import { Customer } from './customer.entity';
 import { Wallet } from './wallet.entity';
@@ -30,6 +24,12 @@ export class Transaction extends BaseEntity {
     nullable: false,
   })
   @ApiProperty()
+  status: transactionStatus;
+
+  @Column({
+    nullable: false,
+  })
+  @ApiProperty()
   reference: string;
 
   @Column({
@@ -44,5 +44,9 @@ export class Transaction extends BaseEntity {
 
   @ManyToOne(() => Customer)
   @JoinColumn()
-  customer: Customer;
+  sender: Customer;
+
+  @ManyToOne(() => Customer)
+  @JoinColumn()
+  receiver: Customer;
 }

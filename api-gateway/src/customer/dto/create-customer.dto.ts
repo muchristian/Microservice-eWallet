@@ -6,19 +6,19 @@ export class CreateCustomerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  firstname: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  lastname: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'markjoker7@gmail.com' })
   @IsNotEmpty()
   @IsString()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: '+250781684599' })
   @IsNotEmpty()
   @IsString()
   phone: string;

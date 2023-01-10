@@ -6,24 +6,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://rabbitmq:5672'],
-        queue: 'transaction-queue',
-        noAck: false,
-        queueOptions: {
-          durable: false,
-        },
-      },
-    },
-  );
-
-  const configService = app.get(ConfigService);
-  const port = configService.get('port');
-  const env = configService.get('env');
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,7 +15,21 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen();
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [
+        `amqp://${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+      ],
+      queue: 'transaction-queue',
+      noAck: false,
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+
+  app.startAllMicroservices();
   Logger.log('Microservice is listening');
 }
 bootstrap();

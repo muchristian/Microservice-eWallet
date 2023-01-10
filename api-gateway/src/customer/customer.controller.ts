@@ -3,50 +3,54 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Query,
   HttpStatus,
   HttpCode,
+  Inject,
+  BadRequestException,
 } from '@nestjs/common';
-import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
-import GenericResponse from '../shared/interfaces/generic-response';
-import { IPage } from 'src/shared/interfaces/page.interface';
 import { IPagination } from './dto/paginate.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   getGenericResponseSchema,
   getPaginatedSchema,
 } from '../shared/utils/swagger.util';
-import { CustomerResponseDto } from './dto/customer-response.dto';
-import { Observable } from 'rxjs';
+import { ClientProxy } from '@nestjs/microservices';
+import { checkIsEmail, checkIsPhone } from 'src/shared/utils/credential-check';
 
 @Controller('customer')
 @ApiTags('Customer')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(
+    @Inject('CUSTOMER_SERVICE') private readonly client: ClientProxy,
+  ) {}
 
   @Post()
   @ApiCreatedResponse(getGenericResponseSchema(CreateCustomerDto))
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    const result = this.customerService.create(createCustomerDto);
-    return {
-      message: 'Customer create successfully',
-      result,
-    };
+  async create(@Body() createCustomerDto: CreateCustomerDto) {
+    if (!checkIsEmail(createCustomerDto.email)) {
+      throw new BadRequestException('Invalid email');
+    }
+    if (!checkIsPhone(createCustomerDto.phone)) {
+      throw new BadRequestException('Invalid phone');
+    }
+    return this.client.send({ cmd: 'create-customer' }, createCustomerDto);
   }
 
-  @Get()
-  @ApiOkResponse(getPaginatedSchema(CreateCustomerDto))
-  findAll(
-    @Query() paginateParams: IPagination,
-  ): GenericResponse<Observable<IPage<CustomerResponseDto>>> {
-    return {
-      message: 'Customers returned successfully',
-      result: this.customerService.findAll(paginateParams),
-    };
+  @Get(':id')
+  @ApiOkResponse(getGenericResponseSchema(CreateCustomerDto))
+  @ApiParam({ name: 'id' })
+  findOne(
+    @Param('id') id: string, // : GenericResponse<Observable<IPage<CustomerResponseDto>>>
+  ) {
+    return this.client.send({ cmd: 'get-customer' }, id);
   }
 }
