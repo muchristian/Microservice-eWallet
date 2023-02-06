@@ -1,109 +1,15 @@
-version: "3.7"
+version: '3.7'
 
 services:
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
-    container_name: "rabbitmq"
+    container_name: 'rabbitmq'
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
       - ./:/var/lib/rabbitmq/
       - ./:/var/log/rabbitmq
-    networks:
-      - tekana-net
-
-  api-gateway:
-    container_name: api_gateway
-    environment:
-      NODE_ENV: development
-      PORT: 3000
-    build:
-      context: ./api-gateway
-    depends_on:
-      - rabbitmq
-    expose:
-      - 3000
-    ports:
-      - 3000:3000
-    restart: unless-stopped
-    networks:
-      - tekana-net
-
-  customer-microservice:
-    container_name: customer_microservice
-    environment:
-      NODE_ENV: development
-      PORT: 3001
-      POSTGRES_PORT: 5432
-      POSTGRES_HOST: psqldb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-    build:
-      context: ./customer-microservice
-    depends_on:
-      - psqldb
-      - rabbitmq
-    expose:
-      - 3001
-    ports:
-      - 3001:3001
-    restart: unless-stopped
-    networks:
-      - tekana-net
-
-  wallet-microservice:
-    container_name: wallet_microservice
-    environment:
-      NODE_ENV: development
-      PORT: 3002
-      POSTGRES_PORT: 5432
-      POSTGRES_HOST: psqldb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-    build:
-      context: ./wallet-microservice
-    depends_on:
-      - psqldb
-      - rabbitmq
-    expose:
-      - 3002
-    ports:
-      - 3002:3002
-    restart: unless-stopped
-    networks:
-      - tekana-net
-
-  transaction-microservice:
-    container_name: transaction_microservice
-    environment:
-      NODE_ENV: development
-      PORT: 3003
-      POSTGRES_PORT: 5432
-      POSTGRES_HOST: psqldb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-    build:
-      context: ./transaction-microservice
-    depends_on:
-      - psqldb
-      - rabbitmq
-    expose:
-      - 3003
-    ports:
-      - 3003:3003
-    restart: unless-stopped
-    networks:
-      - tekana-net
 
   psqldb:
     image: postgres:13
@@ -114,8 +20,6 @@ services:
       - 5432:5432
     volumes:
       - psqldb:/var/lib/postgresql/
-    networks:
-      - tekana-net
 volumes:
   psqldb:
 networks:

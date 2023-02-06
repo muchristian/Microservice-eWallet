@@ -1,0 +1,56 @@
+{
+  "monorepo": true,
+  "root": "apps/api",
+  "sourceRoot": "apps/api/src",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/api/tsconfig.app.json"
+  },
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "main",
+      "sourceRoot": "apps/api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json"
+      }
+    },
+    "customer": {
+      "type": "application",
+      "root": "apps/customer",
+      "entryFile": "main",
+      "sourceRoot": "apps/customer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/customer/tsconfig.app.json"
+      }
+    },
+    "wallet": {
+      "type": "application",
+      "root": "apps/wallet",
+      "entryFile": "main",
+      "sourceRoot": "apps/wallet/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/wallet/tsconfig.app.json"
+      }
+    },
+    "transaction": {
+      "type": "application",
+      "root": "apps/transaction",
+      "entryFile": "main",
+      "sourceRoot": "apps/transaction/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transaction/tsconfig.app.json"
+      }
+    },
+    "shared": {
+      "type": "library",
+      "root": "libs/shared",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared/tsconfig.lib.json"
+      }
+    }
+  }
+}
